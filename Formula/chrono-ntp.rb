@@ -35,6 +35,12 @@ class ChronoNtp < Formula
   end
 
   test do
-    system "#{bin}/chrono-ntp", "-help"
+    binary_name = if OS.mac?
+      Hardware::CPU.arm? ? "chrono-ntp-darwin-arm64" : "chrono-ntp-darwin-amd64"
+    else
+      Hardware::CPU.arm? ? "chrono-ntp-linux-arm64" : "chrono-ntp-linux-amd64"
+    end
+
+    system "#{bin}/#{binary_name}", "-help"
   end
 end
