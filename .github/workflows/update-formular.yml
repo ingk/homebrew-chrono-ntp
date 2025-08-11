@@ -1,0 +1,94 @@
+name: Update Homebrew Formula
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout formula repo
+        uses: actions/checkout@v4
+
+      - name: Get latest release info
+        id: release
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/ingk/chrono-ntp/releases/latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract latest tag
+        id: parse_tag
+        run: |
+          latest_tag=$(echo '${{ steps.release.outputs.data }}' | jq -r .tag_name)
+          latest_tag=${latest_tag#v} # strip v prefix
+          echo "tag=$latest_tag" >> $GITHUB_ENV
+
+      - name: Get current formula version
+        id: current_version
+        run: |
+          current=$(grep -m1 '^  version "' Formula/chrono-ntp.rb | cut -d '"' -f2)
+          echo "current_version=$current" >> $GITHUB_ENV
+
+      - name: Check if update is needed
+        run: |
+          if [ "$current_version" = "$tag" ]; then
+            echo "Formula is already at version $tag. No update needed."
+            exit 0
+          fi
+
+      - name: Parse release assets and download
+        run: |
+          arm_mac_url=$(echo '${{ steps.release.outputs.data }}' | jq -r '.assets[] | select(.name | test("darwin-arm64")) | .browser_download_url')
+          amd_mac_url=$(echo '${{ steps.release.outputs.data }}' | jq -r '.assets[] | select(.name | test("darwin-amd64")) | .browser_download_url')
+          arm_linux_url=$(echo '${{ steps.release.outputs.data }}' | jq -r '.assets[] | select(.name | test("linux-arm64")) | .browser_download_url')
+          amd_linux_url=$(echo '${{ steps.release.outputs.data }}' | jq -r '.assets[] | select(.name | test("linux-amd64")) | .browser_download_url')
+
+          curl -L "$arm_mac_url" -o mac-arm64
+          curl -L "$amd_mac_url" -o mac-amd64
+          curl -L "$arm_linux_url" -o linux-arm64
+          curl -L "$amd_linux_url" -o linux-amd64
+
+          echo "arm_mac_sha=$(shasum -a 256 mac-arm64 | cut -d ' ' -f1)" >> $GITHUB_ENV
+          echo "amd_mac_sha=$(shasum -a 256 mac-amd64 | cut -d ' ' -f1)" >> $GITHUB_ENV
+          echo "arm_linux_sha=$(shasum -a 256 linux-arm64 | cut -d ' ' -f1)" >> $GITHUB_ENV
+          echo "amd_linux_sha=$(shasum -a 256 linux-amd64 | cut -d ' ' -f1)" >> $GITHUB_ENV
+
+          echo "arm_mac_url=$arm_mac_url" >> $GITHUB_ENV
+          echo "amd_mac_url=$amd_mac_url" >> $GITHUB_ENV
+          echo "arm_linux_url=$arm_linux_url" >> $GITHUB_ENV
+          echo "amd_linux_url=$amd_linux_url" >> $GITHUB_ENV
+
+      - name: Update Formula
+        run: |
+          sed -i "s/^  version .*/  version \"${tag}\"/" Formula/chrono-ntp.rb
+
+          sed -i "s|https://github.com/ingk/chrono-ntp/releases/download/v.*darwin-arm64|${arm_mac_url}|" Formula/chrono-ntp.rb
+          sed -i "s|https://github.com/ingk/chrono-ntp/releases/download/v.*darwin-amd64|${amd_mac_url}|" Formula/chrono-ntp.rb
+          sed -i "s|https://github.com/ingk/chrono-ntp/releases/download/v.*linux-arm64|${arm_linux_url}|" Formula/chrono-ntp.rb
+          sed -i "s|https://github.com/ingk/chrono-ntp/releases/download/v.*linux-amd64|${amd_linux_url}|" Formula/chrono-ntp.rb
+
+          sed -i "s/REPLACE_WITH_ARM64_MAC_SHA/${arm_mac_sha}/" Formula/chrono-ntp.rb
+          sed -i "s/REPLACE_WITH_AMD64_MAC_SHA/${amd_mac_sha}/" Formula/chrono-ntp.rb
+          sed -i "s/REPLACE_WITH_ARM64_LINUX_SHA/${arm_linux_sha}/" Formula/chrono-ntp.rb
+          sed -i "s/REPLACE_WITH_AMD64_LINUX_SHA/${amd_linux_sha}/" Formula/chrono-ntp.rb
+
+      - name: Commit & Push changes
+        run: |
+          git config user.email "christian.hieke@googlemail.com"
+          git config user.name "Christian Hieke"
+          git add Formula/chrono-ntp.rb
+          git commit -m "Update chrono-ntp to v${tag}" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.tag }}
+          name: "chrono-ntp v${{ env.tag }}"
+          body: "Updated Homebrew formula for chrono-ntp v${{ env.tag }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
