@@ -62,17 +62,21 @@ jobs:
 
       - name: Update Formula
         run: |
+          # Update version
           sed -i "s/^  version .*/  version \"${tag}\"/" Formula/chrono-ntp.rb
 
+          # Update URLs
           sed -i "s|https://github.com/ingk/chrono-ntp/releases/download/v.*darwin-arm64|${arm_mac_url}|" Formula/chrono-ntp.rb
           sed -i "s|https://github.com/ingk/chrono-ntp/releases/download/v.*darwin-amd64|${amd_mac_url}|" Formula/chrono-ntp.rb
           sed -i "s|https://github.com/ingk/chrono-ntp/releases/download/v.*linux-arm64|${arm_linux_url}|" Formula/chrono-ntp.rb
           sed -i "s|https://github.com/ingk/chrono-ntp/releases/download/v.*linux-amd64|${amd_linux_url}|" Formula/chrono-ntp.rb
 
-          sed -i "s/REPLACE_WITH_ARM64_MAC_SHA/${arm_mac_sha}/" Formula/chrono-ntp.rb
-          sed -i "s/REPLACE_WITH_AMD64_MAC_SHA/${amd_mac_sha}/" Formula/chrono-ntp.rb
-          sed -i "s/REPLACE_WITH_ARM64_LINUX_SHA/${arm_linux_sha}/" Formula/chrono-ntp.rb
-          sed -i "s/REPLACE_WITH_AMD64_LINUX_SHA/${amd_linux_sha}/" Formula/chrono-ntp.rb
+          # Update SHA256 checksums (match URL line, replace SHA on next line)
+          sed -i "/darwin-arm64/{n;s|sha256 \".*\"|sha256 \"${arm_mac_sha}\"|}" Formula/chrono-ntp.rb
+          sed -i "/darwin-amd64/{n;s|sha256 \".*\"|sha256 \"${amd_mac_sha}\"|}" Formula/chrono-ntp.rb
+          sed -i "/linux-arm64/{n;s|sha256 \".*\"|sha256 \"${arm_linux_sha}\"|}" Formula/chrono-ntp.rb
+          sed -i "/linux-amd64/{n;s|sha256 \".*\"|sha256 \"${amd_linux_sha}\"|}" Formula/chrono-ntp.rb
+
 
       - name: Commit & Push changes
         run: |
