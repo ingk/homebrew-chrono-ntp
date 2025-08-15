@@ -1,26 +1,26 @@
 class ChronoNtp < Formula
   desc "chrono-ntp is a simple command-line tool that synchronizes with an NTP (Network Time Protocol) server to account for any difference between your computer’s clock and the actual time, displaying the precise date and time in your terminal."
   homepage "https://github.com/ingk/chrono-ntp"
-  version "202508121759"
+  version "202508151936"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/ingk/chrono-ntp/releases/download/v202508121759/chrono-ntp-darwin-arm64"
-      sha256 "55d8c7261271e45b3ee8852afd31ef77e096f74e0c10c49cc4b60f851d02808d" # will be replaced automatically
+      url "https://github.com/ingk/chrono-ntp/releases/download/v202508151936/chrono-ntp-darwin-arm64"
+      sha256 "d9a5419c63e503c0fdadfa98e25761f8d4d34a81d050d5677ddff2d72b7a20a5" # will be replaced automatically
     else
-      url "https://github.com/ingk/chrono-ntp/releases/download/v202508121759/chrono-ntp-darwin-amd64"
-      sha256 "32cf43e8214014f1dbb9d2ce93fc2e24d648a2f683a2b21d15059af84301edc4" # will be replaced automatically
+      url "https://github.com/ingk/chrono-ntp/releases/download/v202508151936/chrono-ntp-darwin-amd64"
+      sha256 "2b874abcb0399e208fa6087fa00d01d0db4ca864a32f672f88573ef08586f204" # will be replaced automatically
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/ingk/chrono-ntp/releases/download/v202508121759/chrono-ntp-linux-arm64"
-      sha256 "23944a80cf97484a9fa9308fcfeb031fa781b76bed00a78c62d9bdbb6f577ebe" # will be replaced automatically
+      url "https://github.com/ingk/chrono-ntp/releases/download/v202508151936/chrono-ntp-linux-arm64"
+      sha256 "407038cc197bfbc36c30a7a079174adca921374e41244bd767d6bfeac24983e3" # will be replaced automatically
     else
-      url "https://github.com/ingk/chrono-ntp/releases/download/v202508121759/chrono-ntp-linux-amd64"
-      sha256 "5a9a0a0d86445c3fd3ef4cfc527f3b5819c85c5769f4e03a81b97c39f50c0b50" # will be replaced automatically
+      url "https://github.com/ingk/chrono-ntp/releases/download/v202508151936/chrono-ntp-linux-amd64"
+      sha256 "0249b88df8bfaf3281d58aedd4293006016ca3cdefacb371056994616438c178" # will be replaced automatically
     end
   end
 
