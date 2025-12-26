@@ -1,26 +1,26 @@
 class ChronoNtp < Formula
   desc "Minimal terminal clock synced via NTP; ideal for setting mechanical watches"
   homepage "https://github.com/ingk/chrono-ntp"
-  version "202512131742"
+  version "202512241422"
   license "MIT"
 
   on_macos do
     if Hardware::CPU.arm?
-      url "https://github.com/ingk/chrono-ntp/releases/download/v202512131742/chrono-ntp-darwin-arm64"
-      sha256 "e1d1586592692d76d4f25a7300ef42969785caa6261c10886ba3b0d99f812353" # will be replaced automatically
+      url "https://github.com/ingk/chrono-ntp/releases/download/v202512241422/chrono-ntp-darwin-arm64"
+      sha256 "cadf30748abf2438a6303ad242e79a32bcd1340abe2eb44a69356eb58cdee9ff" # will be replaced automatically
     else
-      url "https://github.com/ingk/chrono-ntp/releases/download/v202512131742/chrono-ntp-darwin-amd64"
-      sha256 "4d4fecdf4248098e331e12bf3b4db5367a56e45fc3854c3d5ffef4f9b3be9098" # will be replaced automatically
+      url "https://github.com/ingk/chrono-ntp/releases/download/v202512241422/chrono-ntp-darwin-amd64"
+      sha256 "88c8105a33c167a5f48cce0776b2887c30c86e05c43939a763c1c0b5618c96a3" # will be replaced automatically
     end
   end
 
   on_linux do
     if Hardware::CPU.arm?
-      url "https://github.com/ingk/chrono-ntp/releases/download/v202512131742/chrono-ntp-linux-arm64"
-      sha256 "e93da9d432e0e902001a8303c50c7fd8ada0b0dedb81d670d27040be484effea" # will be replaced automatically
+      url "https://github.com/ingk/chrono-ntp/releases/download/v202512241422/chrono-ntp-linux-arm64"
+      sha256 "7d28dac3093122a04a5095fc1ea14c5e28577d3ce37c4e31a5b9d88b2bfc63dc" # will be replaced automatically
     else
-      url "https://github.com/ingk/chrono-ntp/releases/download/v202512131742/chrono-ntp-linux-amd64"
-      sha256 "94705c872840768d99024b8dfbf731bbba4b3e85775c349cdb83c305cb9637d2" # will be replaced automatically
+      url "https://github.com/ingk/chrono-ntp/releases/download/v202512241422/chrono-ntp-linux-amd64"
+      sha256 "c0e08579efc59ea62cec96fc7f4b5c2bf1b0902ea9ff9d13eeefc1b2497687c0" # will be replaced automatically
     end
   end
 
